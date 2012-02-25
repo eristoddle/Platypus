@@ -16,7 +16,6 @@ use lithium\storage\Session;
 
 $name = basename(LITHIUM_APP_PATH);
 Session::config(array(
-	// 'cookie' => array('adapter' => 'Cookie', 'name' => $name),
 	'default' => array('adapter' => 'Php', 'session.name' => $name)
 ));
 
@@ -38,14 +37,25 @@ Session::config(array(
  * @see lithium\action\Request::$data
  * @see lithium\security\Auth
  */
-// use lithium\security\Auth;
+use lithium\security\Auth;
 
-// Auth::config(array(
-// 	'default' => array(
-// 		'adapter' => 'Form',
-// 		'model' => 'Users',
-// 		'fields' => array('username', 'password')
-// 	)
-// ));
+Auth::config(array(
+    'phpbb' => array(
+        'adapter'  => 'app\security\auth\adapter\Forum',
+        'model'    => 'app\models\Identities',
+        'scope'    => array(
+            'type' => 'phpbb',
+            'prv_name' => 'afdc.com',
+        )
+    ),
+	'password' => array(
+		'adapter' => 'lithium\security\auth\adapter\Form',
+		'model' => 'Users',
+		'fields' => array('user_id', 'provider.data')
+	),
+    'any' => array(
+        'adapter' => 'app\security\auth\adapter\Proxy'
+    )
+));
 
 ?>

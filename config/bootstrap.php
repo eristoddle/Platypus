@@ -31,6 +31,13 @@
  */
 require __DIR__ . '/bootstrap/libraries.php';
 
+
+/**
+ * Load application configuration file. May be accessed anywhere by calling Config::get()
+ */
+\app\util\Config::load(realpath(__DIR__ . '/config.json'));
+
+
 /**
  * The error configuration allows you to use the filter system along with the advanced matching
  * rules of the `ErrorHandler` class to provide a high level of control over managing exceptions in
@@ -43,7 +50,7 @@ require __DIR__ . '/bootstrap/errors.php';
  * default caching rules for various systems within your application
  */
 if (PHP_SAPI !== 'cli') {
-	require __DIR__ . '/bootstrap/cache.php';
+    require __DIR__ . '/bootstrap/cache.php';
 }
 
 /**
@@ -62,7 +69,7 @@ require __DIR__ . '/bootstrap/action.php';
  * This file contains configuration for session (and/or cookie) storage, and user or web service
  * authentication.
  */
-// require __DIR__ . '/bootstrap/session.php';
+require __DIR__ . '/bootstrap/session.php';
 
 /**
  * This file contains your application's globalization rules, including inflections,
@@ -81,7 +88,7 @@ require __DIR__ . '/bootstrap/action.php';
  * This file configures console filters and settings, specifically output behavior and coloring.
  */
 if (PHP_SAPI === 'cli') {
-	require __DIR__ . '/bootstrap/console.php';
+    require __DIR__ . '/bootstrap/console.php';
 }
 
 ?>

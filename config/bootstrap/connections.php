@@ -42,31 +42,6 @@ use lithium\data\Connections;
  */
 Connections::add('default', array(
  	'type' => 'MongoDb',
- 	'host' => 'localhost',
- 	'database' => 'Platypus'
+ 	'host' => \app\util\Config::get('mongo.server'),
+ 	'database' => \app\util\Config::get('mongo.database')
 ));
-
-/**
- * Uncomment this configuration to use CouchDB as your default database.
- */
-// Connections::add('default', array(
-// 	'type' => 'http',
-// 	'adapter' => 'CouchDb',
-// 	'host' => 'localhost',
-// 	'database' => 'my_app'
-// ));
-
-/**
- * Uncomment this configuration to use MySQL as your default database.
- */
-// Connections::add('default', array(
-// 	'type' => 'database',
-// 	'adapter' => 'MySql',
-// 	'host' => 'localhost',
-// 	'login' => 'root',
-// 	'password' => '',
-// 	'database' => 'my_app',
-// 	'encoding' => 'UTF-8'
-// ));
-
-?>

@@ -19,15 +19,12 @@
 use lithium\net\http\Router;
 use lithium\core\Environment;
 
-/**
- * Here, we are connecting `'/'` (the base path) to controller called `'Pages'`,
- * its action called `view()`, and we pass a param to select the view file
- * to use (in this case, `/views/pages/home.html.php`; see `app\controllers\PagesController`
- * for details).
- *
- * @see app\controllers\PagesController
- */
-Router::connect('/', 'Pages::view');
+Router::connect('/', 'Dashboard::index');
+Router::connect('/home', 'Dashboard::user');
+
+Router::connect('/login/{:adapter}', 'Auth::login');
+Router::connect('/login', 'Auth::index');
+Router::connect('/logout', 'Auth::logout');
 
 /**
  * Connect the rest of `PagesController`'s URLs. This will route URLs like `/pages/about` to
@@ -41,7 +38,7 @@ Router::connect('/pages/{:args}', 'Pages::view');
  * core, as well as your own application and any other loaded plugins or frameworks. Browse to
  * [http://path/to/app/test](/test) to run tests.
  */
-if (!Environment::is('production')) {
+if (false and !Environment::is('production')) {
 	Router::connect('/test/{:args}', array('controller' => 'lithium\test\Controller'));
 	Router::connect('/test', array('controller' => 'lithium\test\Controller'));
 }

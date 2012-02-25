@@ -1,0 +1,13 @@
+{
+    "mongo" : {
+        "server":   "localhost",
+        "database": "db_name"
+    },
+    "mysql" : {
+    	"server":   "localhost",
+    	"username": "mysql_user",
+    	"password": "mysql_pass",
+    	"database": "db_name"
+    },
+    "forum_path": "/path/to/phpbb/"
+}
