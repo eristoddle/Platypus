@@ -1,5 +1,6 @@
 # Project Specific
 config.json
+project.json
 
 # Python Specific
 *.pyc

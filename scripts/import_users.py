@@ -13,15 +13,14 @@ image_folder = '../webroot/img/users/';
 
 identical_fields = [
     "firstname", "middlename", "lastname", "city", "state",
-    "weight", "hometown", "occupation", "college", "alias", "handedness"
+    "hometown", "occupation", "college", "alias", "handedness"
 ]
 
 name_changes = {
     "email":     "email_address",
     "sex":       "gender",
     "zip":       "postal_code",
-    "upa":       "usau_id",
-    "height_in": "height"
+    "upa":       "usau_id"
 }
 
 # Load MySQL
@@ -80,53 +79,67 @@ while mysql_record != None:
 
     # Strip nulls and empty strings, convert data:
     for f in mysql_record.keys():
+        val = mysql_record[f]
+
         # Strip Nulls and Blanks
-        if mysql_record[f] == None or mysql_record[f] == '':
+        if val == None or val == '':
             del mysql_record[f]
             continue
 
         # Do the conversion
         if f in identical_fields:
-            new_user[f] = mysql_record[f]
+            new_user[f] = val
             continue
 
         if f in name_changes:
             new_f = name_changes[f]
-            new_user[new_f] = mysql_record[f]
+            new_user[new_f] = val
             continue
 
         if f == 'birthdate':
-            new_user['birthdate'] = str(mysql_record[f])
+            new_user['birthdate'] = str(val)
 
         if f == "address1":
             if new_address != None:
-                new_address[0] = mysql_record[f]
+                new_address[0] = val
             else:
-                new_address = [mysql_record[f], ""]
+                new_address = [val, ""]
 
         if f == "address2":
             if new_address != None: 
-                new_address[1] = mysql_record[f]
+                new_address[1] = val
             else:
-                new_address = ["", mysql_record[f]]
+                new_address = ["", val]
 
         if f in ["phone", "home", "cell", "work"]:
             if 'phone' in new_user:
-                new_user['phone'][f] = mysql_record[f]
+                new_user['phone'][f] = val
             else:
-                new_user['phone'] = {f: mysql_record[f]}
+                new_user['phone'] = {f: val}
 
         if f[:5] == 'show_':
             new_f = f[5:]
             if 'privacy' in new_user:
-                new_user['privacy'][new_f] = mysql_record[f]
+                new_user['privacy'][new_f] = val
             else:
-                new_user['privacy'] = {new_f: mysql_record[f]}
+                new_user['privacy'] = {new_f: val}
 
         if f == 'photo':
-            photo_data = mysql_record[f]
+            photo_data = val
             new_user['photo'] = 'on_disk'
             del mysql_record[f]
+
+        if f == 'height_in':
+            try:
+                new_user['height'] = int(val)
+            except Exception:
+                pass
+
+        if f == 'weight':
+            try:
+                new_user['weight'] = int(val)
+            except Exception:
+                pass
 
     # Condense address
     if new_address != None:
