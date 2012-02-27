@@ -9,7 +9,6 @@ config_json.close()
 
 mysql_config = config['mysql']
 mongo_config = config['mongo']
-image_folder = '../webroot/img/users/';
 
 identical_fields = [
     'name', 'forefeit_score', 'season'
