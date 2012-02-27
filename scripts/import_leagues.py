@@ -35,9 +35,9 @@ user_coll   = platypus_db['users']
 # Clear Existing:
 league_coll.remove()
 
-#Main Loop
+#Main Loop for Leauges table.
 while mysql_record != None:
-    mysql_id = mysql_record['id']
+    mysql_id = int(mysql_record['id'])
 
     new_league = {}
     new_league['mysql_id'] = mysql_id
@@ -45,6 +45,9 @@ while mysql_record != None:
     # Strip nulls and empty strings, convert data:
     for f in mysql_record.keys():
         val = mysql_record[f]
+
+        if type(val) is long:
+            val = int(val)
 
         # Strip Nulls and Blanks
         if val == None or val == '':
@@ -78,3 +81,27 @@ while mysql_record != None:
     print "Saving " + mysql_record['name']
     new_id = league_coll.save(new_league)
     mysql_record = old_cur.fetchone()
+
+
+# Import fields from registrations
+old_cur.execute("SELECT * FROM registration ORDER BY id")
+mysql_record = old_cur.fetchone()
+
+while mysql_record != None:
+    if mysql_record['league2'] != None or mysql_record['league3'] != None:
+        mysql_record = old_cur.fetchone()
+        continue
+
+    changeset = { '$set': {
+        'price': mysql_record['cost'],
+        'registration_open': mysql_record['reg_start'],
+        'registration_close': mysql_record['reg_end']
+    }}
+
+    conditions = {
+        'mysql_id': mysql_record['league1']
+    }
+
+    league_coll.update(conditions, changeset)
+    mysql_record = old_cur.fetchone()
+

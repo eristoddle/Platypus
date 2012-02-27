@@ -19,8 +19,7 @@ identical_fields = [
 name_changes = {
     "email":     "email_address",
     "sex":       "gender",
-    "zip":       "postal_code",
-    "upa":       "usau_id"
+    "zip":       "postal_code"
 }
 
 # Load MySQL
@@ -49,7 +48,7 @@ for the_file in os.listdir(image_folder):
 
 # This is where the magic happens
 while mysql_record != None:
-    mysql_id       = mysql_record['c_id']
+    mysql_id       = int(mysql_record['c_id'])
     photo_data     = None
     new_user       = None
     old_identity   = None
@@ -80,6 +79,9 @@ while mysql_record != None:
     # Strip nulls and empty strings, convert data:
     for f in mysql_record.keys():
         val = mysql_record[f]
+
+        if type(val) is long:
+            val = int(val)
 
         # Strip Nulls and Blanks
         if val == None or val == '':
@@ -138,6 +140,12 @@ while mysql_record != None:
         if f == 'weight':
             try:
                 new_user['weight'] = int(val)
+            except Exception:
+                pass
+
+        if f == 'upa':
+            try:
+                new_user['usau_id'] = int(val)
             except Exception:
                 pass
 
