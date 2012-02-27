@@ -1,3 +1,8 @@
+#
+# Source:      contact     MySQL
+# Destination: users       Mongo
+#
+
 import pymongo
 from bson.objectid import ObjectId
 import MySQLdb as mdb

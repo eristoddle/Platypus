@@ -1,3 +1,8 @@
+#
+# MySQL Source:      team, player 
+# Mongo Destination: teams, leagues, users
+#
+
 import pymongo
 from bson.objectid import ObjectId
 import MySQLdb as mdb

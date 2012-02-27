@@ -1,3 +1,8 @@
+#
+# MySQL Source:      leagues, registration 
+# Mongo Destination: leagues
+#
+
 import pymongo
 from bson.objectid import ObjectId
 import MySQLdb as mdb
