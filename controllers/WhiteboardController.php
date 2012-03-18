@@ -11,20 +11,10 @@
     {
         public function index()
         {
-            // # Create ID
-            // $temp = Users::first();
-            // $a = Identities::create();
+            $pete = Users::find('first', array('conditions' => array('email_address' => 'pete.holiday@gmail.com')));
 
-            // $a->type     = 'phpbb';
-            // $a->user_id  = $temp->_id;
-            // $a->prv_name = 'afdc.com';
-            // $a->prv_uid  = 'peteholiday';
-            // $a->save();
+            $a = $pete->to('array');
 
-            $temp = Auth::check('phpbb', 'abc');
-
-            $a = $temp->getUser();
-
-            return compact('a', 'b', 'c', 'user');
+            return compact('a', 'b');
         }
     }

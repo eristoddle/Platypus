@@ -7,6 +7,7 @@ import pymongo
 from bson.objectid import ObjectId
 import MySQLdb as mdb
 import pprint, sys, json, os
+from mongo_tools import getMongoId
 
 config_json = open('../config/config.json')
 config      = json.load(config_json)
@@ -49,6 +50,12 @@ for the_file in os.listdir(image_folder):
     except Exception, e:
         print e
 
+#Setup Caching
+league_cache = {}
+user_cache   = {}
+team_cache   = {}
+
+
 while mysql_record != None:
     new_team   = {'mysql_id': int(mysql_record['team_id']), 'captains': []}
     photo_data = None
@@ -79,17 +86,18 @@ while mysql_record != None:
             new_team['name'] = unicode(val)
 
         if f == 'league_id':
-            league_id = int(val)
-            league_doc = leagues_coll.find_one({'mysql_id': league_id})
-            if league_doc != None:
-                new_team['league_id'] = league_doc['_id']
+            league_doc_id = getMongoId(leagues_coll, val, league_cache)
+
+            if league_doc_id != None:
+                new_team['league_id'] = league_doc_id
 
         if f == 'captain' or f == 'cocaptain':
             insert_pos = {'captain':0, 'cocaptain':1}
-            captain_id = int(val)
-            captain_user = users_coll.find_one({'mysql_ids': captain_id})
-            if captain_user != None:
-                new_team['captains'].insert(insert_pos[f], captain_user['_id'])
+
+            captain_id = getMongoId(users_coll, val, user_cache, 'mysql_ids')
+            
+            if captain_id != None:
+                new_team['captains'].insert(insert_pos[f], captain_id)
 
         if f in ['rank', 'wins', 'losses', 'ptdiff']:
             if f == 'ptdiff':
@@ -122,9 +130,6 @@ while mysql_record != None:
 mysql_cur.execute('SELECT * FROM player WHERE league_id is not null AND c_id is not null AND team_id is not null ORDER BY c_id')
 mysql_record = mysql_cur.fetchone()
 
-user_cache   = {}
-team_cache   = {}
-
 write_count = 0
 
 while mysql_record != None:
@@ -134,22 +139,9 @@ while mysql_record != None:
     user_doc_id   = None
     team_doc_id   = None
 
-    if user_id not in user_cache:
-        user_doc = users_coll.find_one({'mysql_ids': user_id})
-        if user_doc != None:
-            user_doc_id = user_doc['_id']
-            user_cache[user_id] = user_doc_id
-    else:
-        user_doc_id = user_cache[user_id]
-
-    if team_id not in team_cache:
-        team_doc = teams_coll.find_one({'mysql_id': team_id})
-        if team_doc != None:
-            team_doc_id = team_doc['_id']
-            team_cache[team_id] = team_doc_id
-    else:
-        team_doc_id = team_cache[team_id]
-
+    user_doc_id = getMongoId(users_coll, user_id, user_cache, 'mysql_ids')
+    team_doc_id = getMongoId(teams_coll, team_id, team_cache)
+    
     if user_doc_id != None and team_doc_id != None:
         users_coll.update({'_id': user_doc_id}, {'$push': {'teams'   : team_doc_id}})
         teams_coll.update({'_id': team_doc_id}, {'$push': {'players' : user_doc_id}})

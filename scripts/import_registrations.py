@@ -8,6 +8,7 @@ from bson.objectid import ObjectId
 from decimal import Decimal
 import MySQLdb as mdb
 import pprint, sys, json, os
+from mongo_tools import getMongoId
 
 config_json = open('../config/config.json')
 config      = json.load(config_json)
@@ -53,16 +54,8 @@ while mysql_record != None:
     # Link to a user document
     if 'c_id' in mysql_record:
         val = int(mysql_record['c_id'])
-        if val not in user_cache:
-            user_doc = users_coll.find_one({'mysql_ids': val})
-            if user_doc != None:
-                user_doc_id = user_doc['_id']
-            else:
-                user_doc_id = None
-                
-            user_cache[val] = user_doc_id
-        else:
-            user_doc_id = user_cache[val]
+
+        user_doc_id = getMongoId(users_coll, val, user_cache, 'mysql_ids')
 
         if user_doc_id != None:
             new_reg['user_id'] = user_doc_id
@@ -93,16 +86,7 @@ while mysql_record != None:
             continue
 
         if f == 'league_id':
-            if val not in league_cache:
-                league_doc = leagues_coll.find_one({'mysql_id': val})
-                if league_doc != None:
-                    league_doc_id = league_doc['_id']
-                else:
-                    league_doc_id = None
-
-                league_cache[val] = league_doc_id
-            else:
-                league_doc_id = league_cache[val]
+            league_doc_id = getMongoId(leagues_coll, val, league_cache)
 
             if league_doc_id != None:
                 new_reg['league_id'] = league_doc_id

@@ -7,6 +7,7 @@ import pymongo
 from bson.objectid import ObjectId
 import MySQLdb as mdb
 import pprint, sys, json, os
+from mongo_tools import getMongoId
 
 config_json = open('../config/config.json')
 config      = json.load(config_json)
@@ -39,6 +40,9 @@ user_coll   = platypus_db['users']
 # Clear Existing:
 league_coll.remove()
 
+#Setup Caching
+user_cache = {}
+
 #Main Loop for Leauges table.
 while mysql_record != None:
     mysql_id = int(mysql_record['id'])
@@ -69,10 +73,10 @@ while mysql_record != None:
             continue
 
         if f == 'commish':
-            commish_id = int(val)
-            commish_user = user_coll.find_one({'mysql_ids': commish_id})
-            if commish_user != None:
-                new_league['commissioners'] = [commish_user['_id']]
+            commish_doc_id = getMongoId(user_coll, val, user_cache, 'mysql_ids')
+
+            if commish_doc_id != None:
+                new_league['commissioners'] = commish_doc_id
 
         if f == 'max_men':
             new_league['player_limt'] = {'men': int(val)}
