@@ -36,7 +36,7 @@ new_con      = pymongo.Connection()
 platypus_db  = new_con[mongo_config['database']]
 games_coll   = platypus_db['games']
 leagues_coll = platypus_db['leagues']
-fields_coll  = platypus_db['fieldsites']
+fields_coll  = platypus_db['field_sites']
 teams_coll   = platypus_db['teams']
 users_coll   = platypus_db['users']
 

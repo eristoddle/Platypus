@@ -33,7 +33,7 @@ mysql_record = old_cur.fetchone()
 
 new_con     = pymongo.Connection()
 platypus_db = new_con[mongo_config['database']]
-fields_coll  = platypus_db['fieldsites']
+fields_coll  = platypus_db['field_sites']
 
 # Clear Existing:
 fields_coll.remove()

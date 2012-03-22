@@ -43,5 +43,6 @@ use lithium\data\Connections;
 Connections::add('default', array(
  	'type' => 'MongoDb',
  	'host' => \app\util\Config::get('mongo.server'),
- 	'database' => \app\util\Config::get('mongo.database')
+ 	'database' => \app\util\Config::get('mongo.database'),
+    'classes' => array('entity' => 'app\extensions\data\Entity')
 ));

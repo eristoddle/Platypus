@@ -73,10 +73,10 @@ while mysql_record != None:
             continue
 
         if f == 'commish':
-            commish_doc_id = getMongoId(user_coll, val, user_cache, 'mysql_ids')
+            commish_doc_id = getMongoId(user_coll, int(val), user_cache, 'mysql_ids')
 
             if commish_doc_id != None:
-                new_league['commissioners'] = commish_doc_id
+                new_league['commissioner_ids'] = [commish_doc_id]
 
         if f == 'max_men':
             new_league['player_limt'] = {'men': int(val)}

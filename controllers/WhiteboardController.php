@@ -6,15 +6,28 @@
 
     use app\models\Users;
     use app\models\Identities;
+    use app\models\Leagues;
+    use app\models\Registrations;
+    use app\models\Games;
 
     class WhiteboardController extends Controller
     {
         public function index()
         {
-            $pete = Users::find('first', array('conditions' => array('email_address' => 'pete.holiday@gmail.com')));
+            $game = Games::first();
+            $league = $game->getLeague();
+            $fieldsite = $game->getFieldSite();
+            $teams = $game->getTeams();
 
-            $a = $pete->to('array');
+            $a = array();
+            foreach ($teams as $t) {
+                $a[] = $t->name;
+            }
 
-            return compact('a', 'b');
+            $b = $league->to('array');
+            $c = $fieldsite->to('array');
+            
+            return compact('a', 'b', 'c');
         }
     }
+    

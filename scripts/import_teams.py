@@ -20,7 +20,7 @@ image_folder = '../webroot/img/teams/';
 identical_fields = []
 
 name_changes = {
-    'team_draft_id': 'draft_id'
+    'team_draft_id': 'draft_number'
 }
 
 # Load MySQL
