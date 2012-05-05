@@ -1,0 +1,14 @@
+# Project Specific
+config.json
+project.json
+
+# Python Specific
+*.pyc
+
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+

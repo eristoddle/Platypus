@@ -1,0 +1,20 @@
+{
+    "_id" : ObjectId("4f920c90406eb73d1300003c"),
+    "age_division" : "adult",
+    "description" : "This is a test league, it is awesome.",
+    "end_date" : ISODate("2012-08-20T04:00:00Z"),
+    "modules" : {
+        "gRank" : "1"
+    },
+    "name" : "Test",
+    "player_limit" : {
+        "male" : 10,
+        "female" : 5
+    },
+    "price" : 1,
+    "registration_close" : ISODate("2012-05-12T03:59:59Z"),
+    "registration_open" : ISODate("2012-04-19T16:00:00Z"),
+    "season" : "summer",
+    "sport" : "ultimate",
+    "start_date" : ISODate("2012-05-20T04:00:00Z")
+}

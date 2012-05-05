@@ -1,0 +1,1 @@
+<?=$this->form->field('sample.sample_field', array('label' => 'Sample Module Field'))?>
