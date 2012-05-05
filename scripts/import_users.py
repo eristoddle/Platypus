@@ -27,6 +27,28 @@ name_changes = {
     "zip":       "postal_code"
 }
 
+# MySQL IDs of admins and SC members
+user_groups = {
+    3802: ['admin', 'steering-committee'], # Pete Holiday
+    2961: ['admin', 'steering-committee'], # John Boezi
+    497:  ['admin', 'steering-committee'], # Chris Blackburn
+    31:   ['steering-committee'],          # Jenny Lee
+    70:   ['steering-committee'],          # Romey Connell
+    82:   ['steering-committee'],          # Ben Rainwater
+    3693: ['steering-committee'],          # R. John Powers
+    158:  ['steering-committee'],          # George Li
+    3995: ['steering-committee'],          # Chris Church
+    396:  ['steering-committee'],          # Angela Lin
+    509:  ['steering-committee'],          # Jonathan Monforti
+    2531: ['steering-committee'],          # Mark Poole
+    110:  ['steering-committee'],          # Sam Cooke
+    48:   ['steering-committee'],          # Brian Lynch
+    1646: ['steering-committee'],          # Kate Wilson
+    3570: ['steering-committee'],          # Christina Schmidt
+    1255: ['steering-committee'],          # Holly Symolon
+    1249: ['steering-committee'],          # Lauren Stewart
+}
+
 # Load MySQL
 old_con = mdb.connect(mysql_config['server'], mysql_config['username'], mysql_config['password'], mysql_config['database'])
 old_cur = old_con.cursor(mdb.cursors.DictCursor)
@@ -80,6 +102,9 @@ while mysql_record != None:
         new_user['mysql_ids'].append(mysql_id)
     else:
         new_user['mysql_ids'] = [mysql_id]
+
+    if mysql_id in user_groups:
+        new_user['permission_groups'] = user_groups[mysql_id]
 
     # Strip nulls and empty strings, convert data:
     for f in mysql_record.keys():

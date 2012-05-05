@@ -56,7 +56,7 @@ class Forum extends \lithium\core\Object
         // creates $user and $auth objects here.
         $user->session_begin();
         $logged_in = $user->data['is_registered'];
-        $username = $user->data['username_clean'];
+        $username = strtolower($user->data['username_clean']);
 
         if ($logged_in === false) {
             // Not Logged In

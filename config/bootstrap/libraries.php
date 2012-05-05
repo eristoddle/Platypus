@@ -117,9 +117,5 @@ Libraries::add('lithium');
  */
 Libraries::add('app', array('default' => true));
 
-/**
- * Add some plugins:
- */
-// Libraries::add('li3_docs');
-
-?>
+Libraries::add('li3_flash_message');
+Libraries::add('li3_mailer');

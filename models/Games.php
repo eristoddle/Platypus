@@ -2,7 +2,7 @@
 
     namespace app\models;
 
-    use lithium\data\Model;
+    use app\extensions\data\Model;
 
     class Games extends Model
     {
@@ -10,7 +10,7 @@
 
         protected $_schema = array(
             '_id'  => array('type' => 'id'), // required for Mongo
-            'game_time' => array('type' => 'datetime'),
+            'game_time' => array('type' => 'date'),
             'league_id' => array('type' => 'id'),
             'fieldsite_id' => array('type' => 'id'),
             'teams' => array('type' => 'array'),

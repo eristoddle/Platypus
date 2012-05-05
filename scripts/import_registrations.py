@@ -46,6 +46,8 @@ write_count = 0
 # Cache document IDs based on mysql id to speed up the import, no need to query for these multiple times
 user_cache   = {}
 league_cache = {}
+user_metadata_cache = {}
+user_metadata_fields = ['firstname', 'middlename', 'lastname', 'height', 'weight', 'birthdate', 'gender']
 
 while mysql_record != None:
     new_reg  = {'mysql_id': int(mysql_record['id'])}
@@ -59,6 +61,26 @@ while mysql_record != None:
 
         if user_doc_id != None:
             new_reg['user_id'] = user_doc_id
+
+        if str(user_doc_id) in user_metadata_cache:
+            user_meta = user_metadata_cache[str(user_doc_id)]
+        else:
+            user_meta = users_coll.find_one({'_id' : user_doc_id}, user_metadata_fields)
+            if user_meta:
+                del user_meta['_id']
+                user_metadata_cache[str(user_doc_id)] = user_meta
+                    
+        if user_meta:
+            new_reg['user_data'] = user_meta
+
+    if mysql_record['paid']:
+        if mysql_record['paid'] == 'Y':
+            new_reg['paid'] = True
+            new_reg['status'] = 'active'
+        else:
+            new_reg['paid'] = False
+            new_reg['status'] = 'pending'
+
 
     # Strip nulls and empty strings, convert data:
     for f in mysql_record.keys():
@@ -80,6 +102,12 @@ while mysql_record != None:
             new_reg[f] = val
             continue
 
+        if f == 'sortsex':
+            if val == 'M':
+                new_reg['gender'] = 'male'
+            else 
+                new_reg['gender'] = 'female'
+
         if f in name_changes:
             new_f = name_changes[f]
             new_reg[new_f] = val
@@ -93,7 +121,10 @@ while mysql_record != None:
             
 
         if f == 'rank':
-            new_reg['official_rank'] = float(val)
+            if 'secondary_rank_data' not in new_reg:
+                new_reg['secondary_rank_data'] = {}
+
+            new_reg['secondary_rank_data']['commish_rank'] = float(val)
 
         if f[:9] == 'volunteer':
             user_doc[f] = val
@@ -105,9 +136,6 @@ while mysql_record != None:
         if f == 'afdc_virgin' and (val == '1' or val == 'Y'):
             new_reg['first_league'] = True
 
-        if f == 'paid' and val == 'Y':
-            new_reg['paid'] = True
-
         if f == 'waitlist' and val == 'Y':
             new_reg['waitlist'] = True
             new_reg['waitlist_priority'] = 0
@@ -116,7 +144,7 @@ while mysql_record != None:
             new_reg['availability'] = {}
 
         if f == 'availability':
-            new_reg['availability']['general'] = val
+            new_reg['availability']['general'] = val + '%'
 
         if f == 'attend_mst' and val == '1':
             new_reg['availability']['attend_tourney_mst'] = True
@@ -138,7 +166,14 @@ while mysql_record != None:
             if f == 'rank_notes':
                 f = 'notes'
 
+            if f == 'srank':
+                f = 'self_rank'
+
             new_reg['secondary_rank_data'][f] = val
+
+    if 'gender' not in new_reg and 'user_data' in new_reg:
+        if 'gender' in new_reg['user_data']:
+            new_reg['gender'] = new_reg['user_data']['gender']
 
     reg_coll.save(new_reg)
 

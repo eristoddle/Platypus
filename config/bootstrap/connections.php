@@ -44,5 +44,12 @@ Connections::add('default', array(
  	'type' => 'MongoDb',
  	'host' => \app\util\Config::get('mongo.server'),
  	'database' => \app\util\Config::get('mongo.database'),
-    'classes' => array('entity' => 'app\extensions\data\Entity')
+    'classes' => array(
+        'entity' => 'app\extensions\data\Document'
+    )
 ));
+
+// Connections::get("default")->applyFilter("update", function($self, $params, $chain) { 
+//     var_dump($params['query']); die;
+//     return $chain->next($self, $params, $chain); 
+// });

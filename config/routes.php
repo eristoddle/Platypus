@@ -26,6 +26,14 @@ Router::connect('/login/{:adapter}', 'Auth::login');
 Router::connect('/login', 'Auth::index');
 Router::connect('/logout', 'Auth::logout');
 
+Router::connect('/leagues/create', 'Leagues::create');
+Router::connect('/leagues/{:id:\w+}', 'Leagues::view');
+
+Router::connect('/checkout', 'Carts::index');
+
+Router::connect('/ipn', 'Paypal::ipn');
+
+
 /**
  * Connect the rest of `PagesController`'s URLs. This will route URLs like `/pages/about` to
  * `PagesController`, rendering `/views/pages/about.html.php` as a static page.
@@ -38,7 +46,7 @@ Router::connect('/pages/{:args}', 'Pages::view');
  * core, as well as your own application and any other loaded plugins or frameworks. Browse to
  * [http://path/to/app/test](/test) to run tests.
  */
-if (false and !Environment::is('production')) {
+if (true or !Environment::is('production')) {
 	Router::connect('/test/{:args}', array('controller' => 'lithium\test\Controller'));
 	Router::connect('/test', array('controller' => 'lithium\test\Controller'));
 }
@@ -61,8 +69,8 @@ if (false and !Environment::is('production')) {
  * If you're using a document-oriented database, such as CouchDB or MongoDB, or another type of
  * database which uses 24-character hexidecimal values as primary keys, uncomment the routes below.
  */
-// Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}.{:type}', array('id' => null));
-// Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}');
+Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}.{:type}', array('id' => null));
+Router::connect('/{:controller}/{:action}/{:id:[0-9a-f]{24}}');
 
 /**
  * Finally, connect the default route. This route acts as a catch-all, intercepting requests in the

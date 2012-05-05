@@ -15,14 +15,14 @@ use lithium\util\Inflector;
  *
  * @see lithium\data\Entity
  */
-class Entity extends \lithium\data\Entity {
+class Document extends \lithium\data\entity\Document {
     protected $_volatileDataCache = array();
 
     public function tempDataGet($key) {
         if (!isset($this->_volatileDataCache[$key])) {
             return null;
         }
-        
+
         return $this->_volatileDataCache[$key];
     }
 

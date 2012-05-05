@@ -23,6 +23,8 @@
  * @see lithium\util\collection\Filters
  */
 
+setlocale(LC_ALL, 'en_US.UTF-8');
+
 /**
  * The libraries file contains the loading instructions for all plugins, frameworks and other class
  * libraries used in the application, including the Lithium core, and the application itself. These
@@ -72,6 +74,22 @@ require __DIR__ . '/bootstrap/action.php';
 require __DIR__ . '/bootstrap/session.php';
 
 /**
+ * This file contains configuration for user roles authentication.
+ */
+require __DIR__ . '/bootstrap/roles.php';
+
+require __DIR__ . '/bootstrap/logging.php';
+
+/**
+ * In this system, 'modules' are optional components of particular forms. For example, registration might have
+ * an optional component that requests additional information (like handedness or field site preferences). These 
+ * components would likely be able to be turned on or off on a per-league basis, but would store their data
+ * alongside the normal registration data in the registration collection
+ */
+require __DIR__ . '/bootstrap/modules.php';
+
+
+/**
  * This file contains your application's globalization rules, including inflections,
  * transliterations, localized validation, and how localized text should be loaded. Uncomment this
  * line if you plan to globalize your site.
@@ -91,4 +109,5 @@ if (PHP_SAPI === 'cli') {
     require __DIR__ . '/bootstrap/console.php';
 }
 
-?>
+$paypal_config = \app\util\Config::get('paypal');
+\app\util\Paypal::config($paypal_config['nvp']);

@@ -1,0 +1,1 @@
+<?=$this->_render('element', 'modules/Registrations/gRank')?>

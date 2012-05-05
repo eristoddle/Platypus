@@ -1,22 +1,21 @@
 <?php
     namespace app\controllers;
 
-    use lithium\action\Controller;
-    use lithium\security\Auth;
+    use app\extensions\action\Controller;
 
     class DashboardController extends Controller
     {
         public function index()
         {
-            $a = Auth::check('any');
             return compact('a', 'b', 'c');
         }
         public function user()
         {
-            $id = Auth::check('any');
+            $this->flashMessage('The user dashboard is still under construction.', array('alertType' => 'warning'));
+            return $this->redirect('Profile::index');
+            $user = $this->CURRENT_USER;
 
-            if ($id) {
-                $user = $id->getUser();
+            if ($user) {
                 $a = $user->email_address;
                 $b = $user->privacy['home'];
             }

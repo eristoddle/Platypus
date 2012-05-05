@@ -2,18 +2,18 @@
 
     namespace app\models;
 
-    use lithium\data\Model;
+    use app\extensions\data\Model;
 
     class Teams extends Model
     {
         protected $_schema = array(
             '_id'  => array('type' => 'id'), // required for Mongo
-            'captains' => array('type' => 'array'),
+            'captains' => array('type' => 'id', 'array' => true),
             'draft_number' => array('type' => 'integer'),
             'league_id' => array('type' => 'id'),
             'name' => array('type' => 'string'),
-            'players' => array('type' => 'array'),
-            'stats' => array('type' => 'subdocument')
+            'players' => array('type' => 'id', 'array' => true),
+            'stats' => array('type' => 'object')
         );
 
         public function getCaptains($entity) {

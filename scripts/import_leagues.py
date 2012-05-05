@@ -43,7 +43,7 @@ league_coll.remove()
 #Setup Caching
 user_cache = {}
 
-#Main Loop for Leauges table.
+#Main Loop for Leagues table.
 while mysql_record != None:
     mysql_id = int(mysql_record['id'])
 
@@ -79,7 +79,7 @@ while mysql_record != None:
                 new_league['commissioner_ids'] = [commish_doc_id]
 
         if f == 'max_men':
-            new_league['player_limt'] = {'men': int(val)}
+            new_league['player_limit'] = {'male': int(val)}
 
         if f == 'juniors':
             division_list = ['adult', 'juniors']

@@ -2,7 +2,7 @@
 
     namespace app\models;
 
-    use lithium\data\Model;
+    use app\extensions\data\Model;
 
     class FieldSites extends Model
     {

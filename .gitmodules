@@ -1,0 +1,6 @@
+[submodule "libraries/li3_flash_message"]
+	path = libraries/li3_flash_message
+	url = git://github.com/michaelhue/li3_flash_message.git
+[submodule "libraries/li3_mailer"]
+	path = libraries/li3_mailer
+	url = git://github.com/eLod/li3_mailer.git

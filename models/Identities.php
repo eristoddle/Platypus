@@ -2,7 +2,7 @@
 
     namespace app\models;
 
-    use lithium\data\Model;
+    use app\extensions\data\Model;
 
     class Identities extends Model
     {
@@ -16,7 +16,7 @@
             'prv_name'   => array('type' => 'string'),
             'prv_secret' => array('type' => 'string'),
             'prv_uid'    => array('type' => 'string'),
-            'prv_data'   => array('type' => 'document')
+            'prv_data'   => array('type' => 'object')
         );
 
         public function getUser($entity)
