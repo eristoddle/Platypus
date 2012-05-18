@@ -175,4 +175,3 @@
     </dl>
 </div>
 <?php endif; ?>
-<pre style="margin-top: 30px"><?php print_r($registration->to('array')); ?></pre>
