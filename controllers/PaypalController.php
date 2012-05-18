@@ -7,6 +7,7 @@
     use app\models\Payments;
     use app\models\ShoppingCarts;
     use app\models\CartItems;
+    use app\models\Registrations;
     use lithium\analysis\Logger;
 
     class PaypalController extends Controller
@@ -57,8 +58,15 @@
                             $ci->save(array('status' => CartItems::STATUS_CAPT));
 
                             // Pass payment status down to referenced object
-                            $refObj->save(array('payment_status' => CartItems::STATUS_CAPT));
-
+                            $conditions = array('_id' => $refObj->_id);
+                            $query = array(
+                                '$set' => array(
+                                    'payment_status' => CartItems::STATUS_CAPT,
+                                    'payment_timestamps.pending' => $payment->payment_date
+                                ),
+                                '$push' => array('payments' => $payment->_id)
+                            );
+                            Registrations::update($query, $conditions);
 
                             $captureAmount += $ci->price;
                         } else {
@@ -66,8 +74,15 @@
                             $ci->save(array('status' => CartItems::STATUS_AUTH));
 
                             // Pass payment status down to referenced object
-                            $refObj->save(array('payment_status' => CartItems::STATUS_AUTH));
-
+                            $conditions = array('_id' => $refObj->_id);
+                            $query = array(
+                                '$set' => array(
+                                    'payment_status' => CartItems::STATUS_AUTH,
+                                    'payment_timestamps.pending' => $payment->payment_date
+                                ),
+                                '$push' => array('payments' => $payment->_id)
+                            );
+                            Registrations::update($query, $conditions);
                             $remainder += $ci->price;
                         }
 
@@ -100,12 +115,18 @@
                             $ci->save(array('status' => CartItems::STATUS_PAID));
 
                             // Pass payment status down to referenced object
-                            $refObj->save(array(
-                                'paid' => true,
-                                'payment_status' => CartItems::STATUS_PAID,
-                                // TODO: this stuff should really be handled by the registration object
-                                'status' => 'active'
-                            ));
+                            // TODO: this stuff should really be handled by the registration object
+                            $conditions = array('_id' => $refObj->_id);
+                            $query = array(
+                                '$set' => array(
+                                    'paid' => true,
+                                    'payment_status' => CartItems::STATUS_PAID,
+                                    'status' => 'active',
+                                    'payment_timestamps.completed' => $payment->payment_date
+                                ),
+                                '$push' => array('payments' => $payment->_id)
+                            );
+                            Registrations::update($query, $conditions);
                         } else if  ($ci->status != CartItems::STATUS_PAID) {
                             $unpaid_items++;
                         }
@@ -113,6 +134,24 @@
 
                     if ($unpaid_items == 0) {
                         $cart->save(array('status' => 'closed'));
+                    }
+                } else if (strtolower($payment->payment_status) == 'refunded') {
+                    foreach ($items as $ci) {
+                        Logger::debug('.....cart_item ' . $ci->_id);
+
+                        $refObj = $ci->getReference();
+
+                        $conditions = array('_id' => $refObj->_id);
+                        $query = array(
+                            '$set' => array(
+                                'paid' => false,
+                                'payment_status' => CartItems::STATUS_RFND,
+                                'payment_timestamps.refunded' => $payment->payment_date
+                            ),
+                            '$push' => array('payments' => $payment->_id)
+                        );
+                        Registrations::update($query, $conditions);
+                        Logger::debug('..........refunded.');
                     }
                 }
             }

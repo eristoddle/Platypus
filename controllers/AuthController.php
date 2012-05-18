@@ -7,8 +7,9 @@
     use app\models\PasswordIdentities;
     use app\models\Users;
 
-    use \lithium\security\Auth;
+    use lithium\security\Auth;
     use lithium\analysis\Logger;
+    use lithium\core\Environment;
 
     class AuthController extends Controller
     {
@@ -88,19 +89,24 @@
             $newPassword = $identity->generatePassword();
 
             if ($identity->save()) {
-                // Todo: replace this with something that doesn't suck
-                $to      = $user->email_address;
-                $subject = '[AFDC.com] Password Reset';
-                $message = 'Your password has been reset. It is now: ' . $newPassword;
-                $headers = implode("\n", array(
-                    'From: system@leagues.afdc.com',
-                    'Reply-To: webmaster@afdc.com',
-                    'X-Mailer: PHP/' . phpversion(),
-                ));
+                if (Environment::is('production')) {
+                    // Todo: replace this with something that doesn't suck
+                    $to      = $user->email_address;
+                    $subject = '[AFDC.com] Password Reset';
+                    $message = 'Your password has been reset. It is now: ' . $newPassword;
+                    $headers = implode("\n", array(
+                        'From: system@leagues.afdc.com',
+                        'Reply-To: webmaster@afdc.com',
+                        'X-Mailer: PHP/' . phpversion(),
+                    ));
 
-                mail($to, $subject, $message, $headers);
+                    mail($to, $subject, $message, $headers);
 
-                $this->flashMessage('An email message has been sent with the new password. Please be sure to check your spam folder.', array('alertType' => 'info'));
+                    $this->flashMessage('An email message has been sent with the new password. Please be sure to check your spam folder.', array('alertType' => 'info'));
+                } else {
+                    $this->flashMessage("A new password generated: {$user->email_address} / {$newPassword}. Due to environment limitations, no email was sent.", array('alertType' => 'info'));
+                }
+
                 return $this->redirect($redirectUrl);
             } else {
                 $this->flashMessage('A new password could not be saved; please try again or email the webmaster for assistance.', array('alertType' => 'error'));
