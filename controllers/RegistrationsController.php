@@ -13,18 +13,15 @@
     {
         public function view()
         {
-            if (!isset($this->CURRENT_USER) or !$this->CURRENT_USER->can('registrants.view_details')) {
-                $this->flashMessage('You do not have permission to view this page.', array('alertType' => 'error'));
-                return $this->redirect('Leagues::index');
-            }
-
             if (!isset($this->request->id)) {
                 $this->flashMessage('Could not load that registration.', array('alertType' => 'error'));
                 return $this->redirect('Leagues::index');
             }
 
             $registration = Registrations::find($this->request->id);
+            $league = $registration->getLeague();
+            $user = $registration->getUser();
 
-            return compact('registration');
+            return compact('registration', 'league', 'user');
         }
     }

@@ -11,6 +11,7 @@
         const STATUS_AUTH = 'authorized';
         const STATUS_CAPT = 'capture_pending';
         const STATUS_PAID = 'paid';
+        const STATUS_RFND = 'refunded';
         const STATUS_DONE = 'closed';
 
 

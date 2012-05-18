@@ -21,6 +21,7 @@ use lithium\core\Libraries;
 use lithium\net\http\Router;
 use lithium\core\Environment;
 use lithium\action\Dispatcher;
+use app\util\Config;
 
 /**
  * This filter intercepts the `run()` method of the `Dispatcher`, and first passes the `'request'`
@@ -40,7 +41,7 @@ use lithium\action\Dispatcher;
  * @see lithium\net\http\Router
  */
 Dispatcher::applyFilter('run', function($self, $params, $chain) {
-	Environment::set($params['request']);
+	Environment::set(Config::get('environment', $params['request']));
 
 	foreach (array_reverse(Libraries::get()) as $name => $config) {
 		if ($name === 'lithium') {

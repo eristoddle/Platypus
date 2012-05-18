@@ -83,7 +83,9 @@
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', '<?=$googleAnalytics['account']?>']);
-      _gaq.push(['_setDomainName', 'afdc.com']);
+      <?php if (isset($googleAnalytics['domain'])): ?>
+        _gaq.push(['_setDomainName', <?=$googleAnalytics['domain']?>]);
+      <?php endif; ?>
       _gaq.push(['_trackPageview']);
 
       (function() {
@@ -96,7 +98,6 @@
   </head>
 
   <body>
-
     <div class="navbar navbar-fixed-top" id="navBar">
       <div class="navbar-inner">
         <div class="container">
@@ -151,7 +152,9 @@
         </div>
       </div>
     </div>
-
+    <?php if (!\lithium\core\Environment::is('production')): ?>
+        <div class="alert alert-info">Your current environment is: <strong><?=\lithium\core\Environment::get()?></strong></div>
+    <?php endif; ?>
     <div class="container">
         <?=$this->flashMessage->output('global')?>
         <?php echo $this->content(); ?>

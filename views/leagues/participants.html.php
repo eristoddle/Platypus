@@ -13,12 +13,12 @@
 <p><?=$this->html->link('Return to league listing', 'Leagues::index')?></p>
 
 <h2>Active Registrations</h2>
-<?php registrantTable($active_list, false, $linkIds); ?>
+<?php registrantTable($active_list, 'active'); ?>
 
 <h2>Inactive Registrations</h2>
-<?php registrantTable($pending_list, true, $linkIds); ?>
+<?php registrantTable($pending_list, 'inactive'); ?>
 
-<?php function registrantTable($reg_list, $showStatus = false, $linkIds = false) { ?>
+<?php function registrantTable($reg_list, $type = 'active') { ?>
 <?php
     $tableContents = '';
     $counts = array('male' => 0, 'female' => 0, 'undefined' => 0);
@@ -28,7 +28,7 @@
         } else {
             $counts['undefined']++;
         }
-        $tableContents .= registrantRow($reg, $showStatus, $linkIds); 
+        $tableContents .= registrantRow($reg, $type); 
     }
 ?>
 <p>
@@ -43,7 +43,7 @@
 </p>
 <table class="table table-striped tablesorter">
 <?php 
-    echo registrantRow(null, $showStatus, $linkIds);
+    echo registrantRow(null, $type);
     echo '<tbody>';
     echo $tableContents;
     echo '</tbody>';
@@ -52,18 +52,27 @@
 <?php } ?>
 <?php
 
-    function registrantRow($regObject = null, $showStatus = false, $linkIds = false) {
+    function registrantRow($regObject = null, $type = 'active') {
         if (is_null($regObject)) {
-            $headerRow = '<thead><tr><th width="15%">ID</th><th>Gender</th><th>First Name</th><th>Middle Name</th><th>Last Name</th>' . ($showStatus ? '<th>Payment Status</th>' : '') . '<th width="8%">Rank</th><th>Pair</th><th>Player Type</th><th>Attendance</th><th>Tourneys</th><th width="10%">Signup Date</th></tr></thead>' . "\n";
+            $headerRow  = '<thead><tr>';
+            $headerRow .= '<th>&nbsp;</th>';
+            $headerRow .= '<th>Gender</th>';
+            $headerRow .= '<th>First Name</th>';
+            $headerRow .= '<th>Middle Name</th>';
+            $headerRow .= '<th>Last Name</th>';
+            $headerRow .= $type == 'active' ? '<th>Rank</th>' : '';
+            $headerRow .= '<th>Pair</th>';
+            $headerRow .= $type == 'active' ? '<th>Player Type</th>' : '';
+            $headerRow .= $type == 'active' ? '<th>Attendance</th>' : '';
+            $headerRow .= $type == 'active' ? '<th>Tourneys</th>' : '';
+            $headerRow .= $type == 'inactive' ? '<th>Payment Status</th>' : '';
+            $headerRow .= $type == 'inactive' ? '<th>Payment Auth Date</th>' : '';
+            $headerRow .= '</tr></thead>' . "\n";
             return $headerRow;
         }
 
         $out  = '<tr>';
-        if ($linkIds) {
-            $out .= '<td><a href="/registrations/view/' . $regObject->_id . '">' . $regObject->_id . '</a></td>';
-        } else {
-            $out .= '<td>' . $regObject->_id . '</td>';    
-        }
+        $out .= '<td><a href="/registrations/view/' . $regObject->_id . '"><i class="icon-exclamation-sign"></i></a></td>';
         
         $out .= '<td>' . $regObject->gender . '</td>';
 
@@ -77,26 +86,32 @@
             $out .= '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
         }
 
-        if ($showStatus) {
-            $out .= '<td style="text-transform: capitalize">' . $regObject->status . ' (' . (isset($regObject->payment_status) ? $regObject->payment_status : 'not paid') . ')</td>'; 
+        if ($type == 'active') {
+            $out .= '<td>' . $regObject->getOfficialRank() . '</td>';    
         }
-
-        $out .= '<td>' . $regObject->getOfficialRank() . '</td>';
+        
         $out .= '<td>' . (isset($regObject->pair->text) ? $regObject->pair->text : '&mdash;') . '</td>';
-        $out .= '<td>' . (isset($regObject->player_strength) ? $regObject->player_strength : '&mdash;')  . '</td>';
-        $out .= '<td>' . (isset($regObject->availability->general) ? $regObject->availability->general : '&mdash;')  . '</td>';
 
-        #Tourney
-        $tourneys = array();
-        if (isset($regObject->availability->attend_tourney_mst) and $regObject->availability->attend_tourney_mst) {
-            $tourneys[] = '<abbr title="Midseason Tournament" class="initialism">MST</abbr>';
-        }
-        if (isset($regObject->availability->attend_tourney_eos) and $regObject->availability->attend_tourney_eos) {
-            $tourneys[] = '<abbr title="End-of-season Tournament" class="initialism">EOS</abbr>';
-        }
-        $out .= '<td>' . (count($tourneys) > 0 ? implode(', ', $tourneys) : '&mdash;') . '</td>';
+        if ($type == 'active') {
+            $out .= '<td>' . (isset($regObject->player_strength) ? $regObject->player_strength : '&mdash;')  . '</td>';
+            $out .= '<td>' . (isset($regObject->availability->general) ? $regObject->availability->general : '&mdash;')  . '</td>';
 
-        $out .= '<td>' . (isset($regObject->signup_timestamp) ? date('Y-m-d', $regObject->signup_timestamp->sec) : '0000-00-00') . '</td>';
+            #Tourney
+            $tourneys = array();
+            if (isset($regObject->availability->attend_tourney_mst) and $regObject->availability->attend_tourney_mst) {
+                $tourneys[] = '<abbr title="Midseason Tournament" class="initialism">MST</abbr>';
+            }
+            if (isset($regObject->availability->attend_tourney_eos) and $regObject->availability->attend_tourney_eos) {
+                $tourneys[] = '<abbr title="End-of-season Tournament" class="initialism">EOS</abbr>';
+            }
+            $out .= '<td>' . (count($tourneys) > 0 ? implode(', ', $tourneys) : '&mdash;') . '</td>';
+        }
+
+        if ($type == 'inactive') {
+            $out .= '<td style="text-transform: capitalize">' . $regObject->status . ' (' . (isset($regObject->payment_status) ? $regObject->payment_status : 'not paid') . ')</td>'; 
+            $out .= '<td>' . (isset($regObject->payment_timestamps->pending) ? date('Y-m-d H:i:s', $regObject->payment_timestamps->pending->sec) : '&mdash;') . '</td>'; 
+        }
+
         $out .= "</tr>\n";
 
         return $out;
