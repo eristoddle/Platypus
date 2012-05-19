@@ -72,7 +72,7 @@
                         }
                     }                     
                 }
-                
+
                 if (empty($teamStyles)) {
                     $teamStyles[] = 'n/a';
                 }
@@ -133,7 +133,7 @@
             <div class="span2" style="font-weight: bold">gRank</div>
         </div>
         <div class="row">
-            <dl class="dl-horizontal well span6">
+            <dl class="dl-horizontal well span5">
                 <dt>Experience</dt>
                 <dd><?=$gRankMatrix['desc']?></dd>
 
@@ -178,15 +178,16 @@
             <div class="span1" style="font-weight: bold">Registration</div>
             <div class="span5"><?=$registration->_id?></div>
         </div>
-        <?php if ($CURRENT_USER and $CURRENT_USER->can('leagues.manage')): ?>
-            <h4 style="margin-top: 15px">Admin Actions:</h4>
+        <?php if ($CURRENT_USER and $CURRENT_USER->can('leagues.manage')):  #TODO: $league->isManager($CURRENT_USER) ?>
+            <h4 style="margin-top: 15px">Edit Registrant:</h4>
             <div class="row">    
-                <div class="span6">
-                    <?=$this->html->link(
-                        '<i class="icon-white icon-pencil"></i> Edit This Registrant',
-                        array('Registrations::edit', 'id' => $registration->_id),
-                        array('class' => 'btn btn-primary', 'escape' => false)
-                    )?>
+                <div class="span5">
+                    <?=$this->form->create($registration, array('class' => 'form-horizontal well'))?>
+                    <?=$this->security->requestToken();?>
+                    <?=$this->form->field('status', array('type' => 'select', 'label' => 'League Status', 'empty' => true))?>
+                    <?=$this->form->field('secondary_rank_data.commish_rank', array('type' => 'select', 'label' => 'Official League Rank', 'empty' => true))?>
+                    <?=$this->form->field('Update Registration', array('type' => 'submit-button', 'class' => 'btn btn-primary', 'label' => ''))?>
+                    <?=$this->form->end()?>
                 </div>
             </div>
         <?php endif; ?>
