@@ -42,6 +42,11 @@
 
         public function participants()
         {
+            if (!isset($this->CURRENT_USER)) {
+                $this->flashMessage('You must be logged in to view that page.', array('alertType' => 'error'));
+                return $this->redirect('Leagues::index');
+            }
+            
             $inLeague = array('league_id' => $this->league->_id);
 
             $active_list = Registrations::find('all', array(

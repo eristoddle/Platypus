@@ -68,7 +68,7 @@
             });
 
             // Global Tooltips
-            $("a.hasTooltip").tooltip();
+            $(".hasTooltip").tooltip();
 
             // Global Tablesorter
             $(".tablesorter").tablesorter();

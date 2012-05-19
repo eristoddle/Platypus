@@ -33,7 +33,12 @@
 
             $actionLinks = array();
 
-            $actionLinks[] = $this->html->link('<i class="icon-list"></i>', array('Leagues::participants', 'id' => $l['_id']), array('escape' => false, 'class' => 'hasTooltip', 'title' => 'Participant List'));
+            if (isset($CURRENT_USER)) {
+                $actionLinks[] = $this->html->link('<i class="icon-list"></i>', array('Leagues::participants', 'id' => $l['_id']), array('escape' => false, 'class' => 'hasTooltip', 'title' => 'Participant List'));    
+            } else {
+                $actionLinks[] = '<i class="icon-list hasTooltip" title="Please log in to view the participant list."></i>';
+            }
+            
 
             if (isset($CURRENT_USER) and $CURRENT_USER->can('leagues.edit')) {
                 $actionLinks[] = $this->html->link('<i class="icon-pencil"></i>', array('Leagues::edit', 'id' => $l['_id']), array('escape' => false, 'class' => 'hasTooltip', 'title' => 'Edit League'));

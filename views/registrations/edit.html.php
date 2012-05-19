@@ -10,7 +10,7 @@
 ?>
 <div class="page-header"><h1>
     League Registration
-    <small>View Registrant</small>
+    <small>Edit Registrant</small>
 </h1></div>
 <?=$this->html->link('Return to participants list', array('Leagues::participants', 'id' => $registration->league_id))?>
 
@@ -64,15 +64,11 @@
             <div class="span4" style="text-transform: capitalize">
                 <?php 
                 $teamStyles = array();
-
-                if (isset($registration->team_style_pref)) {
-                    foreach ($registration->team_style_pref as $k => $v) {
-                        if ($v) {
-                            $teamStyles[] = $k;
-                        }
-                    }                     
-                }
-                
+                foreach ((array)$registration->team_style_pref as $k => $v) {
+                    if ($v) {
+                        $teamStyles[] = $k;
+                    }
+                } 
                 if (empty($teamStyles)) {
                     $teamStyles[] = 'n/a';
                 }
