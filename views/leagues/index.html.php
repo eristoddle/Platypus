@@ -1,3 +1,6 @@
+<?php
+    use app\models\Leagues;
+?>
 <div class="page-header"><h1>
     AFDC Leagues
     <small>League Listing</small>
@@ -29,6 +32,7 @@
             echo '<thead><tr><th width="7%">Action</th><th>League Name</th><th width="15%">Season</th><th width="15%">Sport</th><th width="15%">Commissioners</th><th width="15%">Start</th><th width="15%">End</th></tr></thead>';
             echo '<tbody>';
         foreach ($leagues[$key] as $l) {
+            $this_league = Leagues::find($l['_id']);
             $league_link = $this->html->link($l['name'], array('Leagues::view', 'id' => $l['_id']));
 
             $actionLinks = array();
@@ -39,8 +43,7 @@
                 $actionLinks[] = '<i class="icon-list hasTooltip" title="Please log in to view the participant list."></i>';
             }
             
-
-            if (isset($CURRENT_USER) and $CURRENT_USER->can('leagues.edit')) {
+            if (isset($CURRENT_USER) and $this_league->isManager($CURRENT_USER)) {
                 $actionLinks[] = $this->html->link('<i class="icon-pencil"></i>', array('Leagues::edit', 'id' => $l['_id']), array('escape' => false, 'class' => 'hasTooltip', 'title' => 'Edit League'));
             }
 

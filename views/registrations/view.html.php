@@ -178,7 +178,7 @@
             <div class="span1" style="font-weight: bold">Registration</div>
             <div class="span5"><?=$registration->_id?></div>
         </div>
-        <?php if ($CURRENT_USER and $CURRENT_USER->can('leagues.manage')):  #TODO: $league->isManager($CURRENT_USER) ?>
+        <?php if ($CURRENT_USER and $league->isManager($CURRENT_USER)): ?>
             <h4 style="margin-top: 15px">Edit Registrant:</h4>
             <div class="row">    
                 <div class="span5">

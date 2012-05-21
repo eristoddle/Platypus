@@ -110,4 +110,23 @@
             return Registrations::first(compact('conditions'));
         }
 
+        public function isManager($entity, $user)
+        {
+            if (!isset($user->_id)) {
+                return null;
+            }
+
+            if ($user->can('leagues.manage')) {
+                return true;
+            }
+
+            foreach ($entity->commissioner_ids as $cid) {
+                if ($cid == $user->_id) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
     }
