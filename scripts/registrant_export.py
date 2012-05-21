@@ -14,6 +14,8 @@ else:
 
 if (len(sys.argv) > 2):
     f  = codecs.open(sys.argv[2], 'w', 'UTF-8')
+else:
+    f = None
 
 config_json = open('../config/config.json')
 config      = json.load(config_json)
@@ -50,6 +52,9 @@ for reg in registrations.find({"league_id" : league_id, "status" : "active"}):
     if "birthdate" not in user:
         user['birthdate'] = ""
 
+    if "email_address" not in user:
+        user['email_address'] = ""
+
     fields = [
         str(reg['user_id']),
         "",
@@ -58,7 +63,7 @@ for reg in registrations.find({"league_id" : league_id, "status" : "active"}):
         str(reg['secondary_rank_data']['self_rank']),
         user['firstname'],
         user['lastname'],
-        "",
+        user['email_address'],
         reg['gender'],
         reg['availability']['general'],
         '"' + reg['pair']['text'] + '"',
