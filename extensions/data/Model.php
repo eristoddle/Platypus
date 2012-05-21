@@ -21,37 +21,6 @@ use lithium\util\String;
             }
         }
 
-        public static function __init()
-        {
-            parent::__init();
-            $class = get_called_class();
-
-            $typeCastingCallback = function($self, $params, $chain) {
-                $schema = $self::schema();
-
-                foreach ($params['data'] ? $params['data'] : array() as $k => $v) {
-                    if (!isset($schema[$k]) or !isset($schema[$k]['type'])) {
-                        continue;
-                    }
-
-                    switch ($schema[$k]['type']) {
-                        case 'date':
-                            if (is_string($v)) {
-                                $params['data'][$k] = strtotime($v);
-                            }
-                            break;
-                        case 'id':
-                            if (is_string($v)) {
-                                $params['data'][$k] = new \MongoId($v);
-                            }
-                            break;
-                    }
-                }
-                return $chain->next($self, $params, $chain);
-            };
-            $class::applyFilter('save', $typeCastingCallback);
-        }
-
         public static function addModules($modules)
         {
             $modules = (array) $modules;

@@ -75,6 +75,9 @@
 
             // Global date picker
             $(".date-field").datepicker();
+
+            // Global Popover
+            $(".hasPopover").popover();
         });
 
     </script>

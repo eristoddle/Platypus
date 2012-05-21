@@ -122,7 +122,7 @@
         <h4 style="margin-top: 15px">Ranking Info:</h4>
         <div class="row">
             <div class="span2" style="font-weight: bold">League Rank</div>
-            <div class="span4"><?=($registration->secondary_rank_data->commish_rank ?: "n/a")?></div>
+            <div class="span4"><?=(isset($registration->secondary_rank_data->commish_rank) ? $registration->secondary_rank_data->commish_rank : "n/a")?></div>
         </div>
         <div class="row">
             <div class="span2" style="font-weight: bold">Self Rank</div>
@@ -184,8 +184,35 @@
                 <div class="span5">
                     <?=$this->form->create($registration, array('class' => 'form-horizontal well'))?>
                     <?=$this->security->requestToken();?>
+                    <?php if (strtolower($registration->status) == 'active'): ?>
+                    <div class="alert alert-warning">
+                        <p>
+                            <strong>Caution:</strong>
+                            Always move a player's replacement from the waitlist into a full league before you change the status of the canceled player. 
+                            <a href="#" class="hasPopover" rel="popover" 
+                                data-original-title="Waitlist Procedure"
+                                data-content="
+                                    <p>
+                                        Changing a registrant status from 'Active' to 'Pending' or 'Canceled' will remove them from the league.
+                                        If the league is full, this will open a spot for a new registrant but will not fill that spot in from the waitlist, meaning a new 
+                                        registrant would be more likely to get that spot than someone on the waitlist.
+                                    </p>
+                                    <br />
+                                    <p>
+                                        To maintain control over who gets the spot being opened by moving a player from Active status, you should first move a player into
+                                        the league off of the waitlist and <em>then</em> remove the canceled player from the league.
+                                    </p>
+                                "
+                            >
+                                Tell me why!
+                            </a>
+                        </p>
+                    </div>
+                    <?php endif; ?>
                     <?=$this->form->field('status', array('type' => 'select', 'label' => 'League Status', 'empty' => true))?>
-                    <?=$this->form->field('secondary_rank_data.commish_rank', array('type' => 'select', 'label' => 'Official League Rank', 'empty' => true))?>
+                    <?=$this->form->field('secondary_rank_data.commish_rank', array('type' => 'select', 'label' => 'Official League Rank', 'empty' => 'Not set', 
+                        'list' => array('0' => '0.0', '0.5' => '0.5', '1'   => '1.0', '1.5' => '1.5', '2'   => '2.0', '2.5' => '2.5', '3'   => '3.0', '3.5' => '3.5', '4'   => '4.0', '4.5' => '4.5', 
+                        '5'   => '5.0', '5.5' => '5.5', '6'   => '6.0', '6.5' => '6.5', '7'   => '7.0', '7.5' => '7.5', '8'   => '8.0', '8.5' => '8.5', '9'   => '9.0', '9.5' => '9.5') ))?>
                     <?=$this->form->field('Update Registration', array('type' => 'submit-button', 'class' => 'btn btn-primary', 'label' => ''))?>
                     <?=$this->form->end()?>
                 </div>

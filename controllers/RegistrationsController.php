@@ -39,12 +39,12 @@
 
         public function view()
         {
-            if ($this->CURRENT_USER and $this->CURRENT_USER->can('leagues.manage') and $this->request->data) {
+            if ($this->CURRENT_USER and $this->CURRENT_USER->can('leagues.manage') and $this->request->data) {                
+                $this->request->data['secondary_rank_data'] = (array)$this->request->data['secondary_rank_data'] + $this->_registration->secondary_rank_data->to('array');;
+
                 if (isset($this->request->data['secondary_rank_data']['commish_rank']) and empty($this->request->data['secondary_rank_data']['commish_rank'])) {
                     unset($this->request->data['secondary_rank_data']['commish_rank']);
                 }
-                
-                $this->request->data['secondary_rank_data'] = (array)$this->request->data['secondary_rank_data'] + $this->_registration->secondary_rank_data->to('array');;
 
                 if ($this->_registration->save($this->request->data)) {
                     $this->flashMessage('Registration updated successfully.', array('alertType' => 'success'));
