@@ -68,13 +68,16 @@
             });
 
             // Global Tooltips
-            $("a.hasTooltip").tooltip();
+            $(".hasTooltip").tooltip();
 
             // Global Tablesorter
             $(".tablesorter").tablesorter();
 
             // Global date picker
             $(".date-field").datepicker();
+
+            // Global Popover
+            $(".hasPopover").popover();
         });
 
     </script>

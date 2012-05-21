@@ -45,8 +45,7 @@ class Form extends \lithium\template\helper\Form {
     );
 
     public function field($name, array $options = array()) {
-
-        if (isset($this->_binding->$name) and $this->_binding->$name === 0) {
+        if (isset($this->_binding) and is_numeric($this->_binding->$name) and abs($this->_binding->$name) <= 0.00001) {
             $options['value'] = '0';
         }
         

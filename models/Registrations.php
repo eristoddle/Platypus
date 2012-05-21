@@ -58,6 +58,12 @@
             ),
             'secondary_rank_data.self_rank' => array(
                 array('inList', 'message' => 'Rank must be a whole number between 0 and 9', 'list' => array('0','1','2','3','4','5','6','7','8','9'))
+            ),
+            'status' => array(
+                array('inList', 'list' => array('active', 'pending', 'canceled'), 'message' => 'Invalid registration status.')
+            ),
+            'secondary_rank_data.commish_rank' => array(
+                array('inList', 'list' => array('0','0.5','1','1.5','2','2.5','3','3.5','4','4.5','5','5.5','6','6.5','7','7.5','8','8.5','9','9.5'), 'message' => 'League rank must be between 0 and 9.', 'required' => false)
             )
         );
 
