@@ -34,7 +34,7 @@ if league == None:
     print "League not found."
     sys.exit()
 
-header_row = "user_id,draft_id,team_id,gRank/self-rank,first name,last name,email,gender,availability,pair,notes,birthdate,height,MST,EOST,wants competitive, wants social, wants family, gRank exp, gRank ath, gRank lvl, gRank skill"
+header_row = "user_id,draft_id,team_id,gRank,self-rank,first name,last name,email,gender,availability,pair,notes,birthdate,height,MST,EOST,wants competitive, wants social, wants family, gRank exp, gRank ath, gRank lvl, gRank skill"
 
 if f == None:
     print header_row
@@ -54,14 +54,15 @@ for reg in registrations.find({"league_id" : league_id, "status" : "active"}):
         str(reg['user_id']),
         "",
         "",
-        " / ".join([str(reg['secondary_rank_data']['grank']), str(reg['secondary_rank_data']['self_rank'])]),
+        str(reg['secondary_rank_data']['grank']),
+        str(reg['secondary_rank_data']['self_rank']),
         user['firstname'],
         user['lastname'],
         "",
         reg['gender'],
         reg['availability']['general'],
-        reg['pair']['text'],
-        reg['notes'],
+        '"' + reg['pair']['text'] + '"',
+        '"' + reg['notes'] + '"',
         user['birthdate'],
         str(user['height']),
         str(reg['availability']['attend_tourney_mst']),
