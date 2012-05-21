@@ -1,6 +1,6 @@
 import pymongo
 from bson.objectid import ObjectId
-import pprint, sys, json, os
+import pprint, sys, json, os, codecs
 
 if (len(sys.argv) > 1):
     try:
@@ -11,6 +11,9 @@ if (len(sys.argv) > 1):
 else:
     print "Please enter a league id to do the export."
     sys.exit()
+
+if (len(sys.argv) > 2):
+    f  = codecs.open(sys.argv[2], 'w', 'UTF-8')
 
 config_json = open('../config/config.json')
 config      = json.load(config_json)
@@ -31,7 +34,12 @@ if league == None:
     print "League not found."
     sys.exit()
 
-print "user_id,draft_id,team_id,gRank/self-rank,first name,last name,email,gender,availability,pair,notes,birthdate,height,MST,EOST,wants competitive, wants social, wants family, gRank exp, gRank ath, gRank lvl, gRank skill"
+header_row = "user_id,draft_id,team_id,gRank/self-rank,first name,last name,email,gender,availability,pair,notes,birthdate,height,MST,EOST,wants competitive, wants social, wants family, gRank exp, gRank ath, gRank lvl, gRank skill"
+
+if f == None:
+    print header_row
+else:
+    f.write(header_row + "\n")
 
 for reg in registrations.find({"league_id" : league_id, "status" : "active"}):
     user = users.find_one({"_id" : reg["user_id"]});
@@ -66,4 +74,11 @@ for reg in registrations.find({"league_id" : league_id, "status" : "active"}):
         str(reg['gRank']['answers']['level_of_play']),
         str(reg['gRank']['answers']['ultimate_skills']),
     ]
-    print ",".join(fields)
+    line = ",".join(fields)
+    if f == None:
+        print line
+    else:
+        f.write(line + "\n")
+
+if f != None:
+    f.close()
