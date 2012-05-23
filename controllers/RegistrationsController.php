@@ -39,7 +39,8 @@
 
         public function view()
         {
-            if ($this->CURRENT_USER and $this->CURRENT_USER->can('leagues.manage') and $this->request->data) {                
+            $league = $this->_registration->getLeague();
+            if ($league->isManager($this->CURRENT_USER) and $this->request->data) {                
                 $this->request->data['secondary_rank_data'] = (array)$this->request->data['secondary_rank_data'] + $this->_registration->secondary_rank_data->to('array');;
 
                 if (isset($this->request->data['secondary_rank_data']['commish_rank']) and empty($this->request->data['secondary_rank_data']['commish_rank'])) {
