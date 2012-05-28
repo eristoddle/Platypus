@@ -110,6 +110,18 @@
             return Registrations::first(compact('conditions'));
         }
 
+        public function getTeams($entity)
+        {
+            if (!$entity->exists()) {
+                return null;
+            }
+
+            $conditions = array('league_id' => $entity->_id);
+            $order = array('stats.rank' => 1);
+            $list = Teams::all(compact('conditions', 'order'));
+            return $list;
+        }
+
         public function isManager($entity, $user)
         {
             if (!isset($user->_id)) {

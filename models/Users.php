@@ -109,4 +109,16 @@
 
             return Identities::first(array('conditions' => array('user_id' => $entity->_id, 'prv_name' => $provider, 'type' => $type)));
         }
+
+        public function getTeams($entity)
+        {
+            if (!$entity->exists()) {
+                return null;
+            }
+
+            $conditions = array('players' => $entity->_id);
+            $order = array('league_id' => 1);
+            $list = Teams::all(compact('conditions', 'order'));
+            return $list;            
+        }
     }
