@@ -121,6 +121,7 @@
               <li<?php echo (isset($at_dashboard) ? $at_dashboard : ''); ?>><a href="/">Home</a></li>
               <li<?php echo (isset($at_leagues) ? $at_leagues : ''); ?>><?=$this->html->link('Leagues', 'Leagues::index')?></li>
               <li<?php echo (isset($at_users) ? $at_users : ''); ?>><?=$this->html->link('Users', 'Users::index')?></li>
+              <li<?php echo (isset($at_teams) ? $at_teams : ''); ?>><?=$this->html->link('Teams', 'Teams::index')?></li>
             </ul>
             <ul class="nav pull-right">
             <?php if (isset($CURRENT_USER)): ?>

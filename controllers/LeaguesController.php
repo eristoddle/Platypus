@@ -16,18 +16,13 @@
         protected function _init() {
             parent::_init();
 
-            $conditions = array('_id' => new \MongoId($this->request->id));
-            $this->league = Leagues::first(compact('conditions'));
+            $this->league = Leagues::find($this->request->id);
 
             if ($this->league) {
                 $this->set(array('league' => $this->league));
             }
 
             $league_id_exempt = array('index', 'create');
-
-            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
-                throw new \Exception('Leauge not found.');
-            }
 
             // Keep empty fields from being converted to zeros.
             if ($this->request->data and isset($this->request->data['player_limit'])) { 
@@ -46,7 +41,15 @@
                 $this->flashMessage('You must be logged in to view that page.', array('alertType' => 'error'));
                 return $this->redirect('Leagues::index');
             }
-            
+
+            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('League not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);
+            }
+
             $inLeague = array('league_id' => $this->league->_id);
 
             $active_list = Registrations::find('all', array(
@@ -94,12 +97,28 @@
 
         public function view()
         {
+            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('League not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);
+            }
+
             $league = $this->league;
             return compact('league');
         }
 
         public function edit()
         {
+            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('League not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);
+            }
+
             if ($this->request->data and $this->league->save($this->request->data)) {
                 return $this->redirect('Leagues::index');
             }
@@ -119,6 +138,14 @@
 
         public function register()
         {
+            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('League not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);
+            }
+
             $league = $this->league;
             $user   = $this->CURRENT_USER;
 

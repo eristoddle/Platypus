@@ -29,6 +29,8 @@ Router::connect('/logout', 'Auth::logout');
 Router::connect('/leagues/create', 'Leagues::create');
 Router::connect('/leagues/{:id:\w+}', 'Leagues::view');
 
+Router::connect('/teams/{:id:\w+}', 'Teams::view');
+
 Router::connect('/checkout', 'Carts::index');
 
 Router::connect('/ipn', 'Paypal::ipn');

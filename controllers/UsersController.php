@@ -18,19 +18,19 @@
                 $conditions = array('$or' => array(
                     array(
                         'email_address' => array(
-                            '$regex' => "^{$query}",
+                            '$regex' => "{$query}",
                             '$options' => 'i'
                         )
                     ),
                     array(
                         'firstname' => array(
-                            '$regex' => "^{$query}",
+                            '$regex' => "{$query}",
                             '$options' => 'i'                            
                         )
                     ),
                     array(
                         'lastname' => array(
-                            '$regex' => "^{$query}",
+                            '$regex' => "{$query}",
                             '$options' => 'i'                            
                         )
                     )

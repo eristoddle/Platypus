@@ -134,7 +134,7 @@
             $user   = $entity->getUser();
 
             if (is_null($league)) {
-                $entity->errors('League not found.');
+                $entity->errors('League not found for registration validity.');
             }
 
             # Check Player Limits
