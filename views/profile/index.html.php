@@ -128,7 +128,7 @@
                         <td><?=$t->stats->rank?></td>
                         <td><?=$t->stats->wins?></td>
                         <td><?=$t->stats->losses?></td>
-                        <td><?=number_format($t->stats->wins / ($t->stats->losses + $t->stats->wins), 3)?></td>
+                        <td><?php if ($t->stats->losses + $t->stats->wins > 0): ?><?=number_format($t->stats->wins / ($t->stats->losses + $t->stats->wins), 3)?><?php else: ?>n/a<?php endif; ?></td>
                         <td><?=$t->stats->point_differential?></td>
                     </tr>
                 <?php endforeach; ?></tbody>
