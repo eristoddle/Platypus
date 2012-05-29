@@ -109,6 +109,7 @@
             <thead><tr>
                 <th>Rank</th>
                 <th>Team</th>
+                <th>Captains</th>
                 <th>Wins</th>
                 <th>Losses</th>
                 <th>Pct</th>
@@ -116,12 +117,44 @@
             </tr></thead>
             <tbody><?php foreach ($teams as $t): ?>
                 <tr>
-                    <td><?=$t->stats->rank?></td>
-                    <td><?=$t->name?></td>
-                    <td><?=$t->stats->wins?></td>
-                    <td><?=$t->stats->losses?></td>
-                    <td><?=number_format($t->stats->wins / ($t->stats->losses + $t->stats->wins), 3)?></td>
-                    <td><?=$t->stats->point_differential?></td>
+                    <td><?=(isset($t->stats->rank) ? $t->stats->rank : 'n/a')?></td>
+                    <td><?=$this->html->link($t->name, array('Teams::view', 'id' => $t->_id))?></td>
+                    <td>
+                    <?php
+                        $captains = $t->getCaptains();
+                        $c_list = array();
+
+                        foreach($captains as $c) {
+                            $c_list[] = $c->firstname . ' ' . $c->lastname;
+                        }
+
+                        if (count($c_list) == 0) {
+                            $c_list[] = 'None Listed';
+                        }
+
+                        echo implode(', ', $c_list);
+                    ?>
+                    </td>
+                    <?php if (is_object($t->stats)): ?>
+                        <td><?=$t->stats->wins?></td>
+                        <td><?=$t->stats->losses?></td>
+                        <td>
+                            <?php if ($t->stats->losses + $t->stats->wins > 0): ?>
+                                <?=number_format($t->stats->wins / ($t->stats->losses + $t->stats->wins), 3)?>
+                            <?php else: ?>
+                                n/a
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if (isset($t->stats->point_differential)): ?>
+                                <?=sprintf("%+d", $t->stats->point_differential)?>
+                            <?php else: ?>
+                                n/a
+                            <?php endif; ?>
+                        </td>
+                    <?php else: ?>
+                        <td colspan="4" style="text-align: center">Not Available</td>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?></tbody>
         </table>

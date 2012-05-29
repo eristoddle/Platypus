@@ -17,19 +17,10 @@
         );
 
         public function getCaptains($entity) {
-            if (is_null($entity->tempDataGet('captains'))) {
-                $captainsArray = array();
-                $conditions = array('_id' => array('$in' => $entity->captains));
-                $users = Users::find('all', compact('captains'));
+            $cids = $entity->captains->export();
 
-                foreach ($users as $u) {
-                    $usersArray[] = $u;
-                }
-
-                $entity->tempDataSet('captains', $captainsArray);
-            }
-
-            return $entity->tempDataGet('captains');
+            $conditions = array('_id' => array('$in' => $cids['data']));
+            return Users::find('all', compact('conditions'));
         }
 
         public function getLeague($entity) {
@@ -43,7 +34,8 @@
 
         public function getPlayers($entity) {
             $conditions = array('teams' => $entity->_id);
+            $order      = array('gender' => -1, 'lastname' => 1, 'firstname' => 1);
 
-            return Users::all(compact($conditions));
+            return Users::all(compact('conditions', 'order'));
         }   
     }

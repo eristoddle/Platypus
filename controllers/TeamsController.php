@@ -29,7 +29,17 @@
 
         public function view()
         {
+            $team = Teams::find($this->request->id);
 
+            if (!isset($team)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('Team not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);
+            }
+
+            return compact('team');
         }
 
         public function checkForExisting()
