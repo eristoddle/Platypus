@@ -50,6 +50,47 @@
                 </div>
             </div>
         <?php endif; ?>
+        <hr />
+        <div class="row">
+            <div class="span6">
+                <table class="table table-striped tablesorter">
+                    <thead><tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Opponent</th>
+                        <th>Field</th>
+                        <th>Score</th>
+                    </tr></thead>
+                    <tbody><?php foreach ($team->getGames() as $g): $fs = $g->getFieldSite(); $opp = $g->getOpponent($team->_id); ?>
+                        <tr style="text-transform: capitalize">
+                            <td><?=date('Y M jS (D)', $g->game_time->sec)?></td>
+                            <td><?=date('g:ia', $g->game_time->sec)?></td>
+                            <td><?=$this->html->link($opp->name, array('Teams::view', 'id' => $opp->_id))?></td>
+                            <td><?=$fs->name?></td>
+                            <?php if (is_object($g->scores)): ?>
+                            <?php
+                                $scores = $g->scores->to('array'); 
+
+                                $my_score = $scores[(string) $team->_id];
+                                $opp_score = $scores[(string) $opp->_id];
+
+                                if ($my_score > $opp_score) {
+                                    $bg_color = '#468847';
+                                    $color    = '#FFFFFF';
+                                } else if ($opp_score > $my_score) {
+                                    $bg_color = '#B94A48';
+                                    $color    = '#FFFFFF';
+                                }
+                            ?>
+                                <td style="background-color: <?=$bg_color?>; color: <?=$color?>;"><?=$my_score?> - <?=$opp_score?></td>
+                            <?php else: ?>
+                                <td>n/a</td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?></tbody>
+                </table>
+            </div>
+        </div>
     </div><!-- End of First Column -->
     <div class="span6">
         <h4>Roster:</h4>
