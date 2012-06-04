@@ -7,7 +7,7 @@ import pymongo
 from bson.objectid import ObjectId
 from decimal import Decimal
 import MySQLdb as mdb
-import pprint, sys, json, os
+import pprint, sys, json, os, datetime
 from mongo_tools import getMongoId
 
 config_json = open('../config/config.json')
