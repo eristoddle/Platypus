@@ -19,36 +19,37 @@
         );
 
         public function getLeague($entity) {
-            if (is_null($entity->tempDataGet('league'))) {
-                $conditions = array('_id' => $entity->league_id);
-                $entity->tempDataSet('league', Leagues::first(compact('conditions')));
-            }
+            $conditions = array('_id' => $entity->league_id);
 
-            return $entity->tempDataGet('league');
+            return Leagues::first(compact('conditions'));
         }
 
         public function getFieldSite($entity) {
-            if (is_null($entity->tempDataGet('fieldsite'))) {
-                $conditions = array('_id' => $entity->fieldsite_id);
-                $entity->tempDataSet('fieldsite', FieldSites::first(compact('conditions')));
-            }
+            $conditions = array('_id' => $entity->fieldsite_id);
 
-            return $entity->tempDataGet('fieldsite');
+            return FieldSites::first(compact('conditions'));
         }
 
-        public function getTeams($entity) {
-            if (is_null($entity->tempDataGet('teams'))) {
-                $teamsArray = array();
-                $conditions = array('_id' => array('$in' => $entity->teams));
-                $teams = Teams::find('all', compact('conditions'));
+        public function getOpponent($entity, $team_id)
+        {
+            $team_list = $entity->teams->export();
+            $team_list = $team_list['data'];
 
-                foreach ($teams as $t) {
-                    $teamsArray[] = $t;
+            $opp_id = null;
+
+            foreach ($team_list as $t) {
+                if ($t == $team_id) {
+                    continue;
                 }
 
-                $entity->tempDataSet('teams', $teamsArray);
+                if (!is_null($opp_id)) {
+                    return null;
+                }
+
+                $opp_id = $t;
             }
 
-            return $entity->tempDataGet('teams');
+            $opp_team = Teams::find((string) $opp_id);
+            return $opp_team;
         }
     }

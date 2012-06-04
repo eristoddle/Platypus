@@ -16,14 +16,16 @@
             'stats' => array('type' => 'object')
         );
 
-        public function getCaptains($entity) {
+        public function getCaptains($entity)
+        {
             $cids = $entity->captains->export();
 
             $conditions = array('_id' => array('$in' => $cids['data']));
             return Users::find('all', compact('conditions'));
         }
 
-        public function getLeague($entity) {
+        public function getLeague($entity)
+        {
             if (is_null($entity->tempDataGet('league'))) {
                 $conditions = array('_id' => $entity->league_id);
                 $entity->tempDataSet('league', Leagues::first(compact('conditions')));
@@ -32,10 +34,19 @@
             return $entity->tempDataGet('league');
         }
 
-        public function getPlayers($entity) {
+        public function getPlayers($entity) 
+        {
             $conditions = array('teams' => $entity->_id);
             $order      = array('gender' => -1, 'lastname' => 1, 'firstname' => 1);
 
             return Users::all(compact('conditions', 'order'));
-        }   
+        }
+
+        public function getGames($entity)
+        {
+            $conditions = array('teams' => $entity->_id);
+            $order      = array('game_time' => 1);
+
+            return Games::all(compact('conditions', 'order'));
+        }
     }

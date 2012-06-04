@@ -21,8 +21,7 @@ identical_fields = []
 
 name_changes = {
     'game_id': 'mysql_id',
-    'round': 'round_number',
-    'time': 'game_time'
+    'round': 'round_number'
 }
 
 # Load MySQL
@@ -77,6 +76,11 @@ while game_record != None:
             new_f = name_changes[f]
             new_game[new_f] = val
             continue
+
+        if f == 'time':
+            tz_shift = datetime.timedelta(hours=4) # Times are stored in mysql incorrectly
+            new_val = val + tz_shift
+            new_game['game_time'] = new_val
 
         if f == 'league_id':
             league_doc_id = getMongoId(leagues_coll, val, league_cache)
