@@ -15,7 +15,15 @@
             'fieldsite_id' => array('type' => 'id'),
             'teams' => array('type' => 'array'),
             'field' => array('type' => 'string'),
-            'round_number' => array('type' => 'integer')
+            'round_number' => array('type' => 'integer'),
+            'old_scores' => array('type' => 'object', 'array' => true),
+            'scores' => array('type' => 'object'),
+                'scores.report_time' => array('type' => 'date'),
+                'scores.forfeit' => array('type' => 'boolean'),
+                'scores.rainout' => array('type' => 'boolean'),
+                'scores.reporter_id' => array('type' => 'id'),
+                'scores.reporter_ip' => array('type' => 'string'),
+            'winner' => array('type' => 'id')
         );
 
         public function getLeague($entity) {
@@ -51,5 +59,34 @@
 
             $opp_team = Teams::find((string) $opp_id);
             return $opp_team;
+        }
+
+        public function getReporter($entity)
+        {
+            if (!isset($entity->scores->reporter_id)) {
+                return null;
+            }
+            $conditions = array('_id' => $entity->scores->reporter_id);
+
+            return Users::first(compact('conditions'));            
+        }
+
+        public function isReporter($entity, $user)
+        {
+            if (!isset($user->_id)) {
+                return null;
+            }
+
+            if ($user->can('games.report_score')) {
+                return true;
+            }
+
+            foreach ($entity->teams as $t) {
+                if ($t->isReporter($user)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }

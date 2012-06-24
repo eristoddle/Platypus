@@ -49,4 +49,42 @@
 
             return Games::all(compact('conditions', 'order'));
         }
+
+        public function isManager($entity, $user)
+        {
+            if (!isset($user->_id)) {
+                return null;
+            }
+
+            $league = $entity->getLeague();
+
+            if ($league->isManager($user)) {
+                return true;
+            }
+
+            if ($user->can('teams.manage')) {
+                return true;
+            }
+
+            foreach ($entity->captain_ids as $cid) {
+                if ($cid == $user->_id) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public function isReporter($entity, $user)
+        {
+            if (!isset($user->_id)) {
+                return null;
+            }
+
+            if ($entity->isManager($user)) {
+                return true;
+            }
+
+            return false;
+        }
     }

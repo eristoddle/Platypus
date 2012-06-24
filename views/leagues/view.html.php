@@ -4,7 +4,10 @@
 
     $commissioners = $league->getCommissioners();
 ?>
-<h1>League Details</h1>
+<div class="page-header"><h1>
+    AFDC Leagues
+    <small>View Details</small>
+</h1></div>
 <?php echo $this->html->link('Return to league list', 'Leagues::index'); ?>
 <hr />
 <div class="row">
