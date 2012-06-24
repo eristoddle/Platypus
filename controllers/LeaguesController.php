@@ -5,9 +5,11 @@
     use lithium\security\Auth;
     use app\extensions\action\Controller;
     use app\models\Leagues;
+    use app\models\Games;
     use app\models\Registrations;
     use app\models\CartItems;
     use app\models\Users;
+    use app\models\Teams;
 
     class LeaguesController extends Controller
     {
@@ -21,8 +23,6 @@
             if ($this->league) {
                 $this->set(array('league' => $this->league));
             }
-
-            $league_id_exempt = array('index', 'create');
 
             // Keep empty fields from being converted to zeros.
             if ($this->request->data and isset($this->request->data['player_limit'])) { 
@@ -97,7 +97,7 @@
 
         public function view()
         {
-            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+            if (!$this->league) {
                 $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
 
                 $this->flashMessage('League not found.', array('alertType' => 'error'));
@@ -111,7 +111,7 @@
 
         public function edit()
         {
-            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+            if (!$this->league) {
                 $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
 
                 $this->flashMessage('League not found.', array('alertType' => 'error'));
@@ -138,7 +138,7 @@
 
         public function register()
         {
-            if (!$this->league and !in_array($this->request->action, $league_id_exempt)) {
+            if (!$this->league) {
                 $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
 
                 $this->flashMessage('League not found.', array('alertType' => 'error'));
@@ -237,5 +237,89 @@
             }
 
             return compact('registration');
+        }
+
+        public function reportScore()
+        {
+            $game = Games::find($this->request->id);
+
+            if (!$game) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('Game not found.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);                
+            }
+
+            if (!isset($this->CURRENT_USER) or !$game->isReporter($this->CURRENT_USER)) {
+                $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
+
+                $this->flashMessage('You do not have permission to report scores for that game.', array('alertType' => 'error'));
+
+                return $this->redirect($redirectUrl);                                
+            }
+
+            if ($this->request->data) {
+                if ($game->scores) {
+                    $old_score_report = $game->scores->export();
+                    $old_score_report = $old_score_report['data'];
+                }
+
+                $team_ids = array();
+
+                $new_score_report = array(
+                    'reporter_id' => $this->CURRENT_USER->_id,
+                    'report_time' => time(),
+                    'reporter_ip' => $this->request->env('REMOTE_ADDR'),
+                    'rainout' => false,
+                    'forfeit' => false
+                );
+
+                $max_score = -1;
+                $winner_id = null;
+                foreach ($this->request->data['scores'] as $id => $score) {
+                    $score = abs(intval($score));
+                    if ($score > $max_score) {
+                        $max_score = $score;
+                        $winner_id = $id;
+                    } else if ($score == $max_score) {
+                        // This means we have a tie, somehow
+                        $winner_id = null;
+                    }
+
+                    $new_score_report[$id] = $score;
+
+                    $team_ids[] = new \MongoId($id);
+                }
+
+                $game->scores = $new_score_report;
+                $game->winner = $winner_id;
+
+                if ($game->save() and isset($old_score_report)) {
+
+                    // Log the previously-reported score
+                    $conditions = array('_id' => $game->_id);
+                    $query = array('$push' => array('old_scores' => $old_score_report));
+                    Games::update($query, $conditions);
+
+                    // Mark teams as needing an update
+                    $conditions = array('_id' => array('$in' => $team_ids));
+                    $query = array('$set' => array('stats.needs_update' => true));
+                    Teams::update($query, $conditions);
+                }
+
+                $this->flashMessage('Your score has been successfully reported.', array('alertType' => 'success'));
+                return $this->redirect(($this->request->env('HTTP_REFERER') ?: '/'));
+            }
+
+            $league = $game->getLeague();
+
+            $teams = array();
+
+            foreach ($game->teams as $t_id) {
+                $teams[(string) $t_id] = Teams::find((string) $t_id);
+            }
+            
+            return compact('game', 'league', 'teams');
         }
     }

@@ -43,6 +43,13 @@
                 <div class="span2" style="font-weight: bold">Point Diff.:</div>
                 <div class="span4"><?=sprintf("%+d", $team->stats->point_differential)?></div>
             </div>
+            <?php if ($team->stats->needs_update == true): ?>
+            <div class="row">
+                <div class="span6">
+                    <div class="alert alert-info">Scores have been reported that are not reflected above.</div>
+                </div>
+            </div>
+            <?php endif; ?>
         <?php else: ?>
             <div class="row">
                 <div class="span6">
@@ -61,7 +68,17 @@
                         <th>Field</th>
                         <th>Score</th>
                     </tr></thead>
-                    <tbody><?php foreach ($team->getGames() as $g): $fs = $g->getFieldSite(); $opp = $g->getOpponent($team->_id); ?>
+                    <tbody><?php foreach ($team->getGames() as $g): ?>
+                            <?php 
+                                $fs = $g->getFieldSite(); 
+                                $opp = $g->getOpponent($team->_id); 
+
+                                if ($g->isReporter($CURRENT_USER)) {
+                                    $reportScoreLink = $this->html->link('<i title="Report Score" class="hasTooltip icon-plus-sign"></i>', array('Leagues::reportScore', 'id' => $g->_id), array('escape' => false));
+                                } else {
+                                    $reportScoreLink = '';
+                                }
+                            ?>
                         <tr style="text-transform: capitalize">
                             <td><?=date('Y M jS (D)', $g->game_time->sec)?></td>
                             <td><?=date('g:ia', $g->game_time->sec)?></td>
@@ -82,9 +99,9 @@
                                     $color    = '#FFFFFF';
                                 }
                             ?>
-                                <td style="background-color: <?=$bg_color?>; color: <?=$color?>;"><?=$my_score?> - <?=$opp_score?></td>
+                                <td style="background-color: <?=$bg_color?>; color: <?=$color?>;"><?=$my_score?> - <?=$opp_score?> <?=$reportScoreLink?></td>
                             <?php else: ?>
-                                <td>n/a</td>
+                                <td>n/a <?=$reportScoreLink?></td>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?></tbody>
