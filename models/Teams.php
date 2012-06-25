@@ -66,7 +66,7 @@
                 return true;
             }
 
-            foreach ($entity->captain_ids as $cid) {
+            foreach ($entity->captains as $cid) {
                 if ($cid == $user->_id) {
                     return true;
                 }
@@ -75,7 +75,7 @@
             return false;
         }
 
-        public function isReporter($entity, $user)
+        public function canReport($entity, $user)
         {
             if (!isset($user->_id)) {
                 return null;
