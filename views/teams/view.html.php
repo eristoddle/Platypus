@@ -83,7 +83,7 @@
                             <td><?=date('Y M jS (D)', $g->game_time->sec)?></td>
                             <td><?=date('g:ia', $g->game_time->sec)?></td>
                             <td><?=$this->html->link($opp->name, array('Teams::view', 'id' => $opp->_id))?></td>
-                            <td><?=$fs->name?></td>
+                            <td><?=$fs->name?> (<?=$g->field?>)</td>
                             <?php if (is_object($g->scores)): ?>
                             <?php
                                 $scores = $g->scores->to('array'); 
@@ -145,7 +145,7 @@
         <?php endif; ?>
     </div>
 </div>
-<pre class="hide debug">
+<pre class="debug hide">
 <?php
     var_dump($team->to('array'));
 ?>
