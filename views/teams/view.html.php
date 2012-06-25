@@ -73,8 +73,8 @@
                                 $fs = $g->getFieldSite(); 
                                 $opp = $g->getOpponent($team->_id); 
 
-                                if ($g->isReporter($CURRENT_USER)) {
-                                    $reportScoreLink = $this->html->link('<i title="Report Score" class="hasTooltip icon-plus-sign"></i>', array('Leagues::reportScore', 'id' => $g->_id), array('escape' => false));
+                                if ((is_object($g->game_time) and ($g->game_time->sec <= time())) and $g->canReport($CURRENT_USER)) {
+                                    $reportScoreLink = $this->html->link('<i title="Report Score" class="hasTooltip icon-edit"></i>', array('Leagues::reportScore', 'id' => $g->_id), array('escape' => false));
                                 } else {
                                     $reportScoreLink = '';
                                 }
@@ -91,17 +91,20 @@
                                 $my_score = $scores[(string) $team->_id];
                                 $opp_score = $scores[(string) $opp->_id];
 
+                                $icon_class = '';
                                 if ($my_score > $opp_score) {
-                                    $bg_color = '#468847';
-                                    $color    = '#FFFFFF';
+                                    $bg_color   = '#468847';
+                                    $color      = '#FFFFFF';
+                                    $icon_class = 'icon-white';
                                 } else if ($opp_score > $my_score) {
-                                    $bg_color = '#B94A48';
-                                    $color    = '#FFFFFF';
+                                    $bg_color   = '#B94A48';
+                                    $color      = '#FFFFFF';
+                                    $icon_class = 'icon-white';
                                 }
                             ?>
-                                <td style="background-color: <?=$bg_color?>; color: <?=$color?>;"><?=$my_score?> - <?=$opp_score?> <?=$reportScoreLink?></td>
+                                <td style="background-color: <?=$bg_color?>; color: <?=$color?>;"><?=$reportScoreLink?> <?=$my_score?> - <?=$opp_score?></td>
                             <?php else: ?>
-                                <td>n/a <?=$reportScoreLink?></td>
+                                <td><?=$reportScoreLink?> n/a</td>
                             <?php endif; ?>
                         </tr>
                     <?php endforeach; ?></tbody>

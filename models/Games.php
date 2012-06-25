@@ -71,7 +71,15 @@
             return Users::first(compact('conditions'));            
         }
 
-        public function isReporter($entity, $user)
+        public function getTeams($entity)
+        {
+            $team_ids = $entity->teams->export();
+            $conditions = array('_id' => array('$in' => $team_ids['data']));
+
+            return Teams::all(compact('conditions'));
+        }
+
+        public function canReport($entity, $user)
         {
             if (!isset($user->_id)) {
                 return null;
@@ -81,8 +89,10 @@
                 return true;
             }
 
-            foreach ($entity->teams as $t) {
-                if ($t->isReporter($user)) {
+            $teams = $entity->getTeams();
+
+            foreach ($teams as $t) {
+                if ($t->canReport($user)) {
                     return true;
                 }
             }

@@ -251,7 +251,7 @@
                 return $this->redirect($redirectUrl);                
             }
 
-            if (!isset($this->CURRENT_USER) or !$game->isReporter($this->CURRENT_USER)) {
+            if (!isset($this->CURRENT_USER) or !$game->canReport($this->CURRENT_USER)) {
                 $redirectUrl = $this->request->env('HTTP_REFERER') ?: '/';
 
                 $this->flashMessage('You do not have permission to report scores for that game.', array('alertType' => 'error'));
