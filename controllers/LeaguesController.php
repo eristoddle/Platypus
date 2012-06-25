@@ -301,12 +301,12 @@
                     $conditions = array('_id' => $game->_id);
                     $query = array('$push' => array('old_scores' => $old_score_report));
                     Games::update($query, $conditions);
-
-                    // Mark teams as needing an update
-                    $conditions = array('_id' => array('$in' => $team_ids));
-                    $query = array('$set' => array('stats.needs_update' => true));
-                    Teams::update($query, $conditions);
                 }
+
+                // Mark teams as needing an update
+                $conditions = array('_id' => array('$in' => $team_ids));
+                $query = array('$set' => array('stats.needs_update' => true));
+                Teams::update($query, $conditions);
 
                 $this->flashMessage('Your score has been successfully reported.', array('alertType' => 'success'));
                 return $this->redirect(($this->request->env('HTTP_REFERER') ?: '/'));
