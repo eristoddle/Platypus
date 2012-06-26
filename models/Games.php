@@ -38,6 +38,25 @@
             return FieldSites::first(compact('conditions'));
         }
 
+        public function getScoreDiff($entity)
+        {
+            $diff = null;
+            if (is_object($entity->scores)) {
+                foreach ($entity->teams as $t) {
+                    $team_score = $entity->scores[(string)$t];
+                    if (!isset($diff)) {
+                        $diff = $team_score;
+                    } else {
+                        $diff -= $team_score;
+                    }
+                }
+
+                $diff = abs($diff);
+            }
+
+            return $diff;
+        }
+
         public function getOpponent($entity, $team_id)
         {
             $team_list = $entity->teams->export();
