@@ -306,7 +306,7 @@
                 // Mark teams as needing an update
                 $conditions = array('_id' => array('$in' => $team_ids));
                 $query = array('$set' => array('stats.needs_update' => true));
-                Teams::update($query, $conditions);
+                Teams::update($query, $conditions, array('multiple' => true));
 
                 $this->flashMessage('Your score has been successfully reported.', array('alertType' => 'success'));
                 return $this->redirect(($this->request->env('HTTP_REFERER') ?: '/'));
