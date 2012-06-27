@@ -46,7 +46,7 @@
             <?php if ($team->stats->needs_update == true): ?>
             <div class="row">
                 <div class="span6">
-                    <div class="alert alert-info">Scores have been reported that are not reflected above.</div>
+                    <div class="alert alert-info">Scores have been reported that are not reflected above. These stats are updated periodically.</div>
                 </div>
             </div>
             <?php endif; ?>

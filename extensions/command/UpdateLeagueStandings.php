@@ -23,6 +23,11 @@ class UpdateLeagueStandings extends \lithium\console\Command {
         $team_stats = array();
         foreach ($teams_needing_update as $team) {
             $team_id_list[] = $team->_id;
+           $team_stats[(string)$team->_id] = array(
+                'wins' => 0,
+                'losses' => 0,
+                'point_differential' => 0
+            );
         }
 
         // Grab all of the games that apply to these teams, standings should be re-calced from the ground up.
@@ -32,15 +37,12 @@ class UpdateLeagueStandings extends \lithium\console\Command {
 
         $league_list = array();
         foreach ($relevant_games_list as $game) {
-            // Ensure we have a stats entry for each team:
+            // Calculate stats for each team
             foreach ($game->getTeams() as $t) {
                 $team_id = (string)$t->_id;
                 if (!isset($team_stats[$team_id])) {
-                    $team_stats[$team_id] = array(
-                        'wins' => 0,
-                        'losses' => 0,
-                        'point_differential' => 0
-                    );
+                    // If we didn't pull all of this team's games, do not update their stats. 
+                    continue;
                 }
 
                 if ($t->_id == $game->winner) {
